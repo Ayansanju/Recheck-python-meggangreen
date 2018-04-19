@@ -2,8 +2,29 @@
 
 from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 
+##### CLASSES #####
 
+class Event(db.Model):
+    """ Each record in the FEMA CSV file is an Event. We will track only some
+        information for this project.
+    """
+
+    __tablename__ = 'events'
+
+    evt_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    kind = db.Column(db.Text, nullable=False)  # Incident Type
+    date = db.Column(db.String(10), nullable=False)  # Declaration Date
+    state = db.Column(db.Text, nullable=False)  # State where disaster occurred
+
+    def __init__(self, kind, date=None, state=None):
+        self.kind = kind
+        self.date = date
+        self.state = state
+
+    def __repr__(self):
+    return '<Event {} {} {}>'.format(self.kind, self.date, self.state)
 
 
 ###### HELPER FUNCTIONS #####
