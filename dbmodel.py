@@ -3,7 +3,11 @@
 from flask_sqlalchemy import SQLAlchemy
 
 
+
+
+
 ###### HELPER FUNCTIONS #####
+
 def connect_to_db(app):
     """ Connect the database to a Flask app. """
 
