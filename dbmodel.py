@@ -55,6 +55,10 @@ def seed_db_from_csv(csv):
 
     """
 
+    # Delete any existing rows
+    Event.query.delete()
+    db.session.commit()
+
     with open(csv, 'r') as csv_file:
         # Skip the first row of column headers
         rows = [row.strip().split(',')[:11] for row in csv_file.readlines()[1:]]
@@ -63,9 +67,13 @@ def seed_db_from_csv(csv):
         event = Event(kind, date=date[:10], state=state, title=title.strip('"'))
         db.session.add(event)
 
-    # Persist changes if entire table was imported successfully
-    db.session.commit()
-
+    try:
+        # Persist changes if entire table was imported successfully
+        db.session.commit()
+        return True
+    except Exception as e:
+        db.session.rollback()
+        return False
 
 
 ################################################################################
