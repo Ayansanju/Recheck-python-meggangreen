@@ -1,6 +1,7 @@
 """ DB ORM Flask-SQLAlchemy """
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 
 db = SQLAlchemy()
 
@@ -31,6 +32,20 @@ class Event(db.Model):
                                                    self.date,
                                                    self.state,
                                                    self.title)
+
+
+    @classmethod
+    def get_earliest_date(cls):
+        """ Return earliest date in database. """
+
+        return cls.query.orderby(cls.date).first().date
+
+
+    @classmethod
+    def get_lateest_date(cls):
+        """ Return latest date in database. """
+
+        return cls.query.orderby(desc(cls.date)).first().date
 
 
 ###### HELPER FUNCTIONS #####
