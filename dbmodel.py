@@ -9,6 +9,7 @@ db = SQLAlchemy()
 class Event(db.Model):
     """ Each record in the FEMA CSV file is an Event. We will track only some
         information for this project.
+
     """
 
     __tablename__ = 'events'
@@ -17,14 +18,19 @@ class Event(db.Model):
     kind = db.Column(db.Text, nullable=False)  # Incident Type
     date = db.Column(db.String(10), nullable=False)  # Declaration Date
     state = db.Column(db.Text, nullable=False)  # State where disaster occurred
+    title = db.Column(db.Text)
 
-    def __init__(self, kind, date=None, state=None):
+    def __init__(self, kind, date=None, state=None, title=None):
         self.kind = kind
         self.date = date
         self.state = state
+        self.title = title
 
     def __repr__(self):
-    return '<Event {} {} {}>'.format(self.kind, self.date, self.state)
+        return '<Event {:16} {} {} {:.30}>'.format(self.kind,
+                                                   self.date,
+                                                   self.state,
+                                                   self.title)
 
 
 ###### HELPER FUNCTIONS #####
@@ -38,9 +44,28 @@ def connect_to_db(app):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
-    # creat_all() does not edit existing data, but can update schema
+    # create_all() does not edit existing data, but can update schema
     # ... which might cause some problems if data exists
     db.create_all()
+
+
+def seed_db_from_csv(csv):
+    """ Seed the database from the provided CSV file. It relies heavily on the
+        format originally provided.
+
+    """
+
+    with open(csv, 'r') as csv_file:
+        # Skip the first row of column headers
+        rows = [row.strip().split(',')[:11] for row in csv_file.readlines()[1:]]
+
+    for _, _, _, _, _, state, date, _, _, kind, title in rows:
+        event = Event(kind, date=date[:10], state=state, title=title.strip('"'))
+        db.session.add(event)
+
+    # Persist changes if entire table was imported successfully
+    db.session.commit()
+
 
 
 ################################################################################
