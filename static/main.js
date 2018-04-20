@@ -45,8 +45,41 @@ function getEvents(evt) {
 
 
 // Helper functions
+function doAddLayer() {
+    /* Adds layer to map. */
+
+    map.addLayer({
+        'id': 'us-states',
+        'type': 'fill',
+        'source': {
+            type: 'geojson',
+            data: statesData
+        },
+        'paint': {
+            'fill-color': {
+                property: 'density',
+                stops: [
+                    [0, '#70F1FF'],
+                    [10, '#56D7FF'],
+                    [20, '#3DBEFF'],
+                    [50, '#23A4FF'],
+                    [100, '#0A8BE6'],
+                    [200, '#0071CC'],
+                    [500, '#0058B3'],
+                    [1000, '#003E99']
+                ]
+            },
+            'fill-opacity': 0.75
+        }
+    }, firstSymbolId);
+
+} // end doAddLayer
+
+
 function updateMap() {
     /* Replaces us-states layer on map. */
+
+    map.removeLayer('us-states');
 
 
 

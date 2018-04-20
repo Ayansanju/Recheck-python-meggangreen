@@ -27,7 +27,7 @@ def return_index():
 def return_selected_data():
     """ Returns JSON-formatted data. """
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
 
     # response = json.loads(request)
 
