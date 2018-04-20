@@ -22,6 +22,7 @@ map.on('load', function () {
       }
   }
 
+  map.addSource('us-data', { type: 'geojson', data: statesData });
   doAddStatesLayer();
 
 });
@@ -43,10 +44,7 @@ function doAddStatesLayer() {
   map.addLayer({
     'id': 'us-states',
     'type': 'fill',
-    'source': {
-      type: 'geojson',
-      data: statesData
-    },
+    'source': 'us-data',
     'paint': {
       'fill-color': {
         property: 'density',
@@ -78,8 +76,7 @@ function almostFlatten(arr) {
 function updateMap() {
   /* Replaces us-states layer. */
 
-  map.removeLayer('us-states');
-  doAddStatesLayer();
+  map.getSource('us-data').setData(statesData);
 
 } // end updateMap
 

@@ -36,23 +36,7 @@ function getEvents(evt) {
         if ( this.readyState == 4 && this.status == 200 ) {
             let results = JSON.parse(this.responseText);
             updateDensities(results['count'], results['events']);
-            // updateMap();
-            map.setPaintProperty('us-states',
-                                 'fill-color', {
-                                    property: 'density',
-                                    stops: [
-                                        [0, '#70F1FF'],
-                                        [10, '#56D7FF'],
-                                        [20, '#3DBEFF'],
-                                        [50, '#23A4FF'],
-                                        [100, '#0A8BE6'],
-                                        [200, '#0071CC'],
-                                        [500, '#0058B3'],
-                                        [1000, '#003E99']
-                                    ]
-                                }); //,
-                                // 'fill-opacity': 0.75);
-
+            updateMap();
         } else {
             debugEl.insertAdjacentHTML("beforeend",
                                        "<p>" + this.responseText + "</p>");
