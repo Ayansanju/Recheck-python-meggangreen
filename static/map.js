@@ -84,4 +84,20 @@ function updateMap() {
 } // end updateMap
 
 
+function updateDensities(count, events) {
+    /* Updates the densities (ie incident count) in statesData. */
 
+    let densities = {};
+    let i, state;
+
+    for ( i = 0; i < count; i++ ) {
+        state = events[i].state;
+        densities[state] = pyGet(densities, state, 0) + 1;
+    } // end for
+
+    for ( i = 0; i < statesData.features.length; i++ ) {
+        state = statesData.features[i].properties.name;
+        statesData.features[i].properties.density = pyGet(densities, state, 0);
+    } // end for
+
+} // end updateDensities

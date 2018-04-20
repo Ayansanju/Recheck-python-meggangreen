@@ -35,8 +35,23 @@ function getEvents(evt) {
     xhttp.onload = function () {
         if ( this.readyState == 4 && this.status == 200 ) {
             let results = JSON.parse(this.responseText);
-            updateDensities(results['events']);
-            updateMap();
+            updateDensities(results['count'], results['events']);
+            // updateMap();
+            map.setPaintProperty('us-states',
+                                 'fill-color', {
+                                    property: 'density',
+                                    stops: [
+                                        [0, '#70F1FF'],
+                                        [10, '#56D7FF'],
+                                        [20, '#3DBEFF'],
+                                        [50, '#23A4FF'],
+                                        [100, '#0A8BE6'],
+                                        [200, '#0071CC'],
+                                        [500, '#0058B3'],
+                                        [1000, '#003E99']
+                                    ]
+                                }); //,
+                                // 'fill-opacity': 0.75);
 
         } else {
             debugEl.insertAdjacentHTML("beforeend",
@@ -46,3 +61,19 @@ function getEvents(evt) {
     xhttp.send();
 
 } // end getEvents
+
+
+function pyGet(object, key, default_value) {
+    /* Faking a Python dictionary .get() method thanks to:
+       https://stackoverflow.com/a/44185289
+
+       Use it like:
+          var obj = {"a": 1};
+          get(obj, "a", 2); // -> 1
+          get(obj, "b", 2); // -> 2
+
+    */
+
+    let result = object[key];
+    return (typeof result !== "undefined") ? result : default_value;
+}
