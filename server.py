@@ -27,7 +27,22 @@ def return_selected_data():
     end = request.args.get('end_date')
     kind = request.args.get('event_type')
 
-    return jsonify(unpack_events(Event.get_matching_events(start, end, kind)))
+    events = Event.get_matching_events(start, end, kind)
+    return jsonify(code=200, num=len(events), events=unpack_events(events))
+
+
+def unpack_events(events):
+    """ Takes in a list of event objects and returns a dictionary for JSON. """
+
+    events_dict = {}
+
+    for i in range(len(events)):
+        events_dict[i] = {'kind': events[i].kind,
+                          'date': events[i].date,
+                          'state': events[i].state,
+                          'title': events[i].title}
+
+    return events_dict
 
 
 ################################################################################
