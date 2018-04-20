@@ -45,51 +45,8 @@
 <div id='map'></div>
 
 <script src="../static/us-states.js"></script>
+<script src="../static/map.js"></script>
 <script src="../static/main.js"></script>
-
-<script>
-  mapboxgl.accessToken = 'pk.eyJ1IjoiY2Fwcmlwb3QiLCJhIjoiY2pjMDJqcDhsMDQ2MzJ4bW85MTR0YXBzYiJ9.Ag9mIZTDONNN9JdN2kW76g';
-  var map = new mapboxgl.Map({
-    container: 'map',
-    maxZoom: 5.5,
-    minZoom: 1.8,
-    style: 'mapbox://styles/mapbox/light-v9',
-    center: [-115.36957574368233, 40],
-    zoom: 2
-  });
-
-  map.on('load', function () {
-
-    var layers = map.getStyle().layers;
-
-    // Find the index of the first symbol layer in the map style
-    var firstSymbolId;
-    for (var i = 0; i < layers.length; i++) {
-        if (layers[i].type === 'symbol') {
-            firstSymbolId = layers[i].id;
-            break;
-        }
-    }
-
-    doAddLayer();
-
-  map.on('click', 'us-states', function(e) {
-    var coordinates = almostFlatten(e.features[0].geometry.coordinates);
-    var bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
-    coordinates.forEach(function(coord) {
-      bounds.extend(coord);
-    })
-
-    map.fitBounds(bounds, { padding: 100 });
-  });
-
-
-  function almostFlatten(arr) {
-    return arr.reduce(function (flat, toFlatten) {
-      return flat.concat(Array.isArray(toFlatten[0]) ? almostFlatten(toFlatten) : [toFlatten]);
-    }, []);
-  }
-</script>
 
 
 </body>
