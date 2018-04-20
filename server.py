@@ -2,6 +2,7 @@
 
 from dbmodel import *
 from flask import Flask, request, jsonify, render_template
+from jinja2 import StrictUndefined
 
 # Start Flask app
 app = Flask(__name__)
@@ -28,7 +29,7 @@ def return_selected_data():
     kind = request.args.get('event_type')
 
     events = Event.get_matching_events(start, end, kind)
-    return jsonify(code=200, num=len(events), events=unpack_events(events))
+    return jsonify(code=200, count=len(events), events=unpack_events(events))
 
 
 def unpack_events(events):
@@ -52,11 +53,14 @@ if __name__ == '__main__':
 
     # Connect to DB and seed; run app if successful
     connect_to_db(app)
-    print("\nSeeding database.")
-    if seed_db_from_csv('fema.csv'):
-        print("Database successfully seeded.")
+    if input("Do you want to seed the database? [y/n] ") == 'y':
+        okay_to_start = seed_db_from_csv('fema.csv')
+    else:
+        okay_to_start = True if Event.query.first() else False
+    if okay_to_start:
+        print("Starting app.")
         date_min = Event.get_earliest_date()
         date_max = Event.get_latest_date()
         app.run(port=5000, host='0.0.0.0')
     else:
-        print("Database not seeded. Exiting.")
+        print("Exiting.")
