@@ -49,14 +49,14 @@ function doAddStatesLayer() {
       'fill-color': {
         property: 'density',
         stops: [
-            [0, '#70F1FF'],
+            [0, '#EEE'],
             [10, '#56D7FF'],
             [20, '#3DBEFF'],
             [50, '#23A4FF'],
             [100, '#0A8BE6'],
             [200, '#0071CC'],
             [500, '#0058B3'],
-            [1000, '#003E99']
+            [800, '#003E99']
         ]
       },
       'fill-opacity': 0.75
@@ -74,7 +74,7 @@ function almostFlatten(arr) {
 
 
 function updateMap() {
-  /* Replaces us-states layer. */
+  /* Refreshes data source with updated data. */
 
   map.getSource('us-data').setData(statesData);
 
