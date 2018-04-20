@@ -17,7 +17,9 @@ app.jinja_env.undefined = StrictUndefined
 def return_index():
     """ Return index.html. """
 
-    return render_template("index.html", date_min=date_min, date_max=date_max)
+    return render_template("index.html", date_min=date_min,
+                                         date_max=date_max,
+                                         kinds=kinds)
 
 
 @app.route('/api', methods=['GET'])
@@ -66,6 +68,7 @@ if __name__ == '__main__':
         print("Starting app.")
         date_min = Event.get_earliest_date()
         date_max = Event.get_latest_date()
+        kinds = Event.get_incident_kinds()
         app.run(port=5000, host='0.0.0.0')
     else:
         print("Exiting.")

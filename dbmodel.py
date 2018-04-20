@@ -49,6 +49,14 @@ class Event(db.Model):
 
 
     @classmethod
+    def get_incident_kinds(cls):
+        """ Return list of incident kinds in database. """
+
+        kinds = db.session.query(cls.kind.distinct()).all()
+        return sorted([kind[0] for kind in kinds])
+
+
+    @classmethod
     def get_matching_events(cls, start_date=None, end_date=None, kind=None):
         """ Returns all objects that match a structured query. """
 
