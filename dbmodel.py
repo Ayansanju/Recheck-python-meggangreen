@@ -38,14 +38,14 @@ class Event(db.Model):
     def get_earliest_date(cls):
         """ Return earliest date in database. """
 
-        return cls.query.orderby(cls.date).first().date
+        return cls.query.order_by(cls.date).first().date
 
 
     @classmethod
-    def get_lateest_date(cls):
+    def get_latest_date(cls):
         """ Return latest date in database. """
 
-        return cls.query.orderby(desc(cls.date)).first().date
+        return cls.query.order_by(desc(cls.date)).first().date
 
 
 ###### HELPER FUNCTIONS #####

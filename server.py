@@ -19,6 +19,17 @@ def return_index():
     return render_template("index.html", date_min=date_min, date_max=date_max)
 
 
+@app.route('/api', methods=['GET'])
+def return_selected_data():
+    """ Returns JSON-formatted data. """
+
+    start = request.args.get('start_date')
+    end = request.args.get('end_date')
+    kind = request.args.get('event_type')
+
+    return jsonify(unpack_events(Event.get_matching_events(start, end, kind)))
+
+
 ################################################################################
 ##### Run App #####
 
