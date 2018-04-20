@@ -53,10 +53,15 @@ if __name__ == '__main__':
 
     # Connect to DB and seed; run app if successful
     connect_to_db(app)
+
+    # Seeding takes a long time, let's ask first
     if input("Do you want to seed the database? [y/n] ") == 'y':
         okay_to_start = seed_db_from_csv('fema.csv')
     else:
+        # But if we don't seed and the db is empty, we can't run
         okay_to_start = True if Event.query.first() else False
+
+    # Run the app if everything is okay
     if okay_to_start:
         print("Starting app.")
         date_min = Event.get_earliest_date()
