@@ -2,6 +2,7 @@
 
 from dbmodel import *
 from flask import Flask, request, jsonify, render_template
+import json
 from jinja2 import StrictUndefined
 
 # Start Flask app
@@ -26,9 +27,13 @@ def return_index():
 def return_selected_data():
     """ Returns JSON-formatted data. """
 
-    start = request.args.get('start_date')
-    end = request.args.get('end_date')
-    kind = request.args.get('event_type')
+    import pdb; pdb.set_trace()
+
+    # response = json.loads(request)
+
+    start = request.args.get('start')
+    end = request.args.get('end')
+    kind = request.args.get('kind')
 
     events = Event.get_matching_events(start, end, kind)
     return jsonify(code=200, count=len(events), events=unpack_events(events))
@@ -56,15 +61,11 @@ if __name__ == '__main__':
     # Connect to DB and seed; run app if successful
     connect_to_db(app)
 
-    # Seeding takes a long time, let's ask first
-    if input("Do you want to seed the database? [y/n] ") == 'y':
-        okay_to_start = seed_db_from_csv('fema.csv')
-    else:
-        # But if we don't seed and the db is empty, we can't run
-        okay_to_start = True if Event.query.first() else False
+    # Seeding takes a long time, but if the db is empty, we can't run
+    okay_to_run = True if Event.query.first() else seed_db_from_csv('fema.csv')
 
     # Run the app if everything is okay
-    if okay_to_start:
+    if okay_to_run:
         print("Starting app.")
         date_min = Event.get_earliest_date()
         date_max = Event.get_latest_date()

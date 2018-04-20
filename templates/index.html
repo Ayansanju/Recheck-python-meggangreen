@@ -11,27 +11,36 @@
 
 <style>
   body { margin:0; padding:0; }
-  #map { height:500px; width:800px; }
+  p, label { font-family:sans-serif; }
+  #form { margin:15px; padding:15px; }
+  #map { height:500px; width:800px; margin:15px; padding:15px; }
 </style>
 </head>
 <body>
 
 <div id='form'>
   <form>
-    <p>Select a time frame from {{ date_min }} to {{ date_max }}</p>
+    <p>
+      Select a time frame from {{ date_min }} to {{ date_max }}<br />
+      (dates must be formated YYYY-MM-DD, eg: 1995-11-23)
+    </p>
     <label>Start date:</label>
-    <input type="text" name="start_date" />
+    <input type="text" name="start" />
     <label>End date:</label>
-    <input type="text" name="end_date" />
+    <input type="text" name="end" />
     <p>Select to view a specific incident type</p>
-    <select name="event_type">
+    <label>Type</label>
+    <select name="kind">
         <option value="all">All Incidents</option>
       {% for kind in kinds %}
         <option value="{{ kind }}">{{ kind }}</option>
       {% endfor %}
     </select>
+    <button type="submit" id="submit">Submit</button>
   </form>
 </div>
+
+<div id="debug"></div>
 
 <div id='map'></div>
 
@@ -106,6 +115,7 @@
   }
 </script>
 
+<script src="../static/main.js"></script>
 
 </body>
 </html>

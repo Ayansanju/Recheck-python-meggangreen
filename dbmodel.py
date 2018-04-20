@@ -68,7 +68,7 @@ class Event(db.Model):
         if end_date:
             query = query.filter(cls.date <= end_date)
 
-        if kind:
+        if kind and kind != 'all':
             query = query.filter(cls.kind == kind)
 
         return query.all()
