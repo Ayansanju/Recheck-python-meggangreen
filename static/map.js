@@ -79,6 +79,9 @@ function updateMap() {
   /* Replaces us-states layer. */
 
   map.removeLayer('us-states');
-
+  doAddStatesLayer();
 
 } // end updateMap
+
+
+

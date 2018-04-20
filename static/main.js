@@ -1,5 +1,7 @@
 "use strict";
 
+var test;
+
 // Add event listeners
 let submitButton = document.getElementById("submit");
 if (submitButton.addEventListener) {
@@ -24,7 +26,7 @@ function getEvents(evt) {
     // Get response message area ready
     let debugEl = document.getElementById("debug");
     debugEl.style.display = "inline-block";
-    debugEl.insertAdjacentText("beforeend", "payload: " + payload);
+    // debugEl.insertAdjacentText("beforeend", "payload: " + payload);
 
     // Send to server
     let xhttp = new XMLHttpRequest();
@@ -32,11 +34,13 @@ function getEvents(evt) {
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.onload = function () {
         if ( this.readyState == 4 && this.status == 200 ) {
-            // debugEl.insertAdjacentHTML("beforeend", this.responseText);
+            let results = JSON.parse(this.responseText);
+            updateDensities(results['events']);
             updateMap();
 
         } else {
-            debugEl.insertAdjacentHTML("beforeend", "<p>Response: failure</p>");
+            debugEl.insertAdjacentHTML("beforeend",
+                                       "<p>" + this.responseText + "</p>");
         } // end if
     };
     xhttp.send();
