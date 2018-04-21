@@ -117,16 +117,6 @@ def seed_db_from_csv(csv):
         return False
 
 
-def update_param_limits():
-    """ Update three globals. Ought to be called on database change. """
-
-    date_min = Event.get_earliest_date()
-    date_max = Event.get_latest_date()
-    kinds = Event.get_incident_kinds()
-
-    return None
-
-
 ################################################################################
 
 if __name__ == '__main__':

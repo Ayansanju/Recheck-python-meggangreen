@@ -160,4 +160,3 @@ def _create_test_csv():
 
 if __name__ == '__main__':
     UT.main()
-

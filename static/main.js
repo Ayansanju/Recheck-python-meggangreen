@@ -25,7 +25,6 @@ function getEvents(evt) {
 
     // Get response message area ready
     let debugEl = document.getElementById("debug");
-    debugEl.style.display = "inline-block";
     // debugEl.insertAdjacentText("beforeend", "payload: " + payload);
 
     // Send to server

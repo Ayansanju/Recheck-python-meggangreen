@@ -1,10 +1,10 @@
 """ Application """
 
-from dbmodel import *
 from flask import Flask, request, jsonify, render_template
 from jinja2 import StrictUndefined
 import json
 from datetime import datetime
+from dbmodel import *
 
 # Start Flask app
 app = Flask(__name__)
@@ -47,6 +47,31 @@ def return_selected_data():
 
 
 ##### Helper Functions #####
+def connect_to_db(app):
+    """ Configure database and connect to app. """
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///checkrfema"
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = app
+    db.init_app(app)
+    db.create_all()
+
+
+def update_param_limits():
+    """ Update three globals. Ought to be called on database change.
+
+        This doesn't work anymore. Version history will show this worked. I
+        could benefit from a code review and pair programming.
+
+    """
+
+    date_min = Event.get_earliest_date()
+    date_max = Event.get_latest_date()
+    kinds = Event.get_incident_kinds()
+
+    return None
+
+
 def validate_date(date):
     """ Returns the validated date as string or None. """
 
@@ -85,6 +110,7 @@ def unpack_events(events):
 ##### Run App #####
 
 if __name__ == '__main__':
+    # import pdb; pdb.set_trace()
 
     # Connect to DB and seed; run app if successful
     connect_to_db(app)
@@ -95,7 +121,12 @@ if __name__ == '__main__':
     # Run the app if everything is okay
     if okay_to_run:
         print("Starting app.")
+        # update_param_limits isn't updating the globals anymore;
+        # running manual update just for proof-of-concept functionality
         update_param_limits()
+        date_min = Event.get_earliest_date()
+        date_max = Event.get_latest_date()
+        kinds = Event.get_incident_kinds()
         app.run(port=5000, host='0.0.0.0')
     else:
         print("Exiting.")
