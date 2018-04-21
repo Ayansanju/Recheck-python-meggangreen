@@ -9,14 +9,26 @@ from dbmodel import db, Event, _create_test_data
 def setUpModule():
     """ Set up browser and mock up database. """
 
-    pass
+    # Make app
+    test_app = Flask(__name__)
+
+    # Connect app to db
+    test_app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///checkrfemaTEST'
+    test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = test_app
+    db.init_app(test_app)
+
+    # Create tables and add test data
+    db.create_all()
+    _create_test_data()
     # broswer = webdriver.Firefox()
 
 
 def tearDownModule():
     """ Close down browser. """
 
-    pass
+    db.session.close()
+    db.drop_all()
     # browser.quit()
 
 
@@ -29,25 +41,13 @@ class TestEventClass(UT.TestCase):
     """
 
     def setUp(self):
+        pass
 
-        # Make app
-        test_app = Flask(__name__)
-
-        # Connect app to db
-        test_app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///checkrfemaTEST'
-        test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        db.app = test_app
-        db.init_app(test_app)
-
-        # Create tables and add test data
-        db.create_all()
-        _create_test_data()
 
 
     def tearDown(self):
+        pass
 
-        db.session.close()
-        db.drop_all()
 
 
     def test_get_earliest_date(self):
