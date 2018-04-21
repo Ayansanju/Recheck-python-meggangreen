@@ -60,6 +60,7 @@ class TestEventClass(UT.TestCase):
                                                       'Flood',
                                                       'Tornado'])
 
+
     def test_get_matching_events(self):
         """ Ideally this would test that the filters don't cancel each other out
             and edge cases, but I'm well past a 4-hr time limit.
@@ -74,13 +75,21 @@ class TestEventClass(UT.TestCase):
         self.assertEqual(kind_events, [Event.query.get(3)])
 
 
-class TestServerHelperFunctions(UT.TestCase):
-    """ Test helper functions in server.py. Does not use db; requires model. """
+class TestServer(UT.TestCase):
+    """ Test routes. """
 
     def setUp(self):
 
+        def _mock_get_matching_events(start, end, kind):
+            return [Event('Aliens', '1947-07-08', 'NM', 'Roswell Arrival')]
+
+        Event.get_matching_events = _mock_get_matching_events
+
         server.date_min = "1947-07-01"
         server.date_max = "1947-07-31"
+        server.kinds = ["Aliens"]
+        self.client = server.app.test_client()
+        server.app.config['TESTING'] = True
 
 
     def test_validate_date(self):
@@ -105,26 +114,8 @@ class TestServerHelperFunctions(UT.TestCase):
         self.assertEqual(server.unpack_events(events), unpacked)
 
 
-class TestServerRoutes(UT.TestCase):
-    """ Test routes. """
-
-    def setUp(self):
-
-        def _mock_get_matching_events(start, end, kind):
-            return [Event('Aliens', '1947-07-08', 'NM', 'Roswell Arrival')]
-
-        Event.get_matching_events = _mock_get_matching_events
-
-        server.date_min = "1947-07-01"
-        server.date_max = "1947-07-31"
-        server.kinds = "Aliens"
-        self.client = server.app.test_client()
-        server.app.config['TESTING'] = True
-
-
     def test_index(self):
 
-        # Does byte comparison, not string
         expected = b"<title>FEMA Historical Map | Hire Meggan!</title>"
         result = self.client.get("/")
         self.assertEqual(result.status_code, 200)
@@ -132,8 +123,12 @@ class TestServerRoutes(UT.TestCase):
 
 
     def test_api(self):
-        pass
+        """ Werkzeug is giving some feedback, but it is still working. """
 
+        result = self.client.get("/api")
+        self.assertEqual(result.status_code, 200)
+        self.assertIn(b'"title": "Roswell Arrival"', result.data)
+        self.assertNotIn(b"blahdeblah", result.data)
 
 
 ##### Test Data #####
