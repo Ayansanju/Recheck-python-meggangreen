@@ -79,18 +79,18 @@ class TestServerHelperFunctions(UT.TestCase):
 
     def setUp(self):
 
-        server.date_min = "1995-11-15"
-        server.date_max = "1995-11-25"
+        server.date_min = "1947-07-01"
+        server.date_max = "1947-07-31"
 
 
     def test_validate_date(self):
 
         # Valid dates return unchanged
-        self.assertEqual(server.validate_date('1995-11-23'), '1995-11-23')
+        self.assertEqual(server.validate_date('1947-07-23'), '1947-07-23')
 
         # Invalid dates return None
-        self.assertIsNone(server.validate_date('1995-11-235'))
-        self.assertIsNone(server.validate_date('1995-95-67'))
+        self.assertIsNone(server.validate_date('1947-07-235'))
+        self.assertIsNone(server.validate_date('1947-95-67'))
         self.assertIsNone(server.validate_date('fakedate'))
 
 
@@ -103,6 +103,28 @@ class TestServerHelperFunctions(UT.TestCase):
                         'title': 'Roswell Arrival'}}
 
         self.assertEqual(server.unpack_events(events), unpacked)
+
+
+class TestServerRoutes(UT.TestCase):
+    """ Test routes. """
+
+    def setUp(self):
+
+        server.date_min = "1947-07-01"
+        server.date_max = "1947-07-31"
+        server.kinds = "Aliens"
+        self.client = server.app.test_client()
+        server.app.config['TESTING'] = True
+
+
+    def test_index(self):
+
+        # Does byte comparison, not string
+        expected = b"<title>FEMA Historical Map | Hire Meggan!</title>"
+        result = self.client.get("/")
+        self.assertEqual(result.status_code, 200)
+        self.assertIn(expected, result.data)
+
 
 
 ##### Test Data #####
