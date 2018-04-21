@@ -47,16 +47,6 @@ def return_selected_data():
 
 
 ##### Helper Functions #####
-def update_param_limits():
-    """ Update three globals. Ought to be called on database change. """
-
-    date_min = Event.get_earliest_date()
-    date_max = Event.get_latest_date()
-    kinds = Event.get_incident_kinds()
-
-    return None
-
-
 def validate_date(date):
     """ Returns the validated date as string or None. """
 

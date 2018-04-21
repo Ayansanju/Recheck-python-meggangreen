@@ -1,16 +1,15 @@
 """ Testing Module """
 
 import unittest as UT
+from flask import Flask
 import server
+from dbmodel import db, Event, _create_test_data
 # from selenium import webdriver
 
 def setUpModule():
     """ Set up browser and mock up database. """
 
-    server.date_min = "1995-11-15"
-    server.date_max = "1995-11-25"
-    server.kinds = ["Danger Will Robinson", "We're Losing Shields"]
-
+    pass
     # broswer = webdriver.Firefox()
 
 
@@ -21,8 +20,74 @@ def tearDownModule():
     # browser.quit()
 
 
+class TestEventClass(UT.TestCase):
+    """ Test Event class in dbmodel.py. Uses test database.
+
+        If these tests pass, 'update_param_limits' should also pass, but we
+        should confirm the globals are updated in integration testing.
+
+    """
+
+    def setUp(self):
+
+        # Make app
+        test_app = Flask(__name__)
+
+        # Connect app to db
+        test_app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///checkrfemaTEST'
+        test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        db.app = test_app
+        db.init_app(test_app)
+
+        # Create tables and add test data
+        db.create_all()
+        _create_test_data()
+
+
+    def tearDown(self):
+
+        db.session.close()
+        db.drop_all()
+
+
+    def test_get_earliest_date(self):
+
+        self.assertEqual(Event.get_earliest_date(), '1842-08-25')
+
+
+    def test_get_latest_date(self):
+
+        self.assertEqual(Event.get_latest_date(), '1875-08-25')
+
+
+    def test_get_incident_kinds(self):
+
+        self.assertEqual(Event.get_incident_kinds(), ['Earthquake',
+                                                      'Flood',
+                                                      'Tornado'])
+
+    def test_get_matching_events(self):
+        """ Ideally this would test that the filters don't cancel each other out
+            and edge cases, but I'm well past a 4-hr time limit.
+
+        """
+
+        start_events = Event.get_matching_events(start_date='1875-01-01')
+        end_events = Event.get_matching_events(end_date='1843-01-01')
+        kind_events = Event.get_matching_events(kind='Earthquake')
+        self.assertEqual(start_events, [Event.query.get(1)])
+        self.assertEqual(end_events, [Event.query.get(2)])
+        self.assertEqual(kind_events, [Event.query.get(3)])
+
+
 class TestServerHelperFunctions(UT.TestCase):
-    """ Test helper functions in server.py """
+    """ Test helper functions in server.py. Does not use database. """
+
+    def setUp(self):
+
+        server.date_min = "1995-11-15"
+        server.date_max = "1995-11-25"
+
 
     def test_validate_date(self):
 
@@ -31,8 +96,19 @@ class TestServerHelperFunctions(UT.TestCase):
 
         # Invalid dates return None
         self.assertIsNone(server.validate_date('1995-11-235'))
-        self.assertIsNone(server.validate_date('5845-95-67'))
+        self.assertIsNone(server.validate_date('1995-95-67'))
         self.assertIsNone(server.validate_date('fakedate'))
+
+
+    def test_unpack_events(self):
+
+        events = [Event('Aliens', '1947-07-08', 'NM', 'Roswell Arrival')]
+        unpacked = {0: {'kind': 'Aliens',
+                        'date': '1947-07-08',
+                        'state': 'NM',
+                        'title': 'Roswell Arrival'}}
+
+        self.assertEqual(server.unpack_events(events), unpacked)
 
 
 ################################################################################
