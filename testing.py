@@ -6,39 +6,6 @@ from os import remove
 
 import server
 from dbmodel import db, Event, seed_db_from_csv
-# from selenium import webdriver
-
-def setUpModule():
-    """ Set up browser and mock up database. """
-
-    # Make app
-    test_app = Flask(__name__)
-
-    # Connect app to db
-    test_app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///checkrfemaTEST"
-    test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db.app = test_app
-    db.init_app(test_app)
-
-    # Create tables and add test data
-    db.create_all()
-    # It would be better to unit test these functions before using here, but for
-    # space, time, scope, etc. this is fine.
-    _create_test_csv()
-    seed_db_from_csv('test-data.csv')
-    # Remove test data csv file
-    remove('test-data.csv')
-
-    # broswer = webdriver.Firefox()
-
-
-def tearDownModule():
-    """ Close down browser. """
-
-    db.session.close()
-    db.drop_all()
-    # browser.quit()
-
 
 class TestEventClass(UT.TestCase):
     """ Test Event class in dbmodel.py. Uses test database.
@@ -47,6 +14,35 @@ class TestEventClass(UT.TestCase):
         should confirm the globals are updated in integration testing.
 
     """
+
+    def setUp(self):
+        """ Set up test database and app. """
+
+        # Make app
+        test_app = Flask(__name__)
+
+        # Connect app to db
+        test_app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///checkrfemaTEST"
+        test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        db.app = test_app
+        db.init_app(test_app)
+
+        # Create tables and add test data
+        db.create_all()
+        # It would be better to unit test these functions before using here, but for
+        # space, time, scope, etc. this is fine.
+        _create_test_csv()
+        seed_db_from_csv('test-data.csv')
+        # Remove test data csv file
+        remove('test-data.csv')
+
+
+    def tearDown(self):
+        """ Drop data and schema from test db. """
+
+        db.session.close()
+        db.drop_all()
+
 
     def test_get_earliest_date(self):
 
@@ -79,7 +75,7 @@ class TestEventClass(UT.TestCase):
 
 
 class TestServerHelperFunctions(UT.TestCase):
-    """ Test helper functions in server.py. Does not use database. """
+    """ Test helper functions in server.py. Does not use db; requires model. """
 
     def setUp(self):
 
