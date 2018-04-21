@@ -110,6 +110,11 @@ class TestServerRoutes(UT.TestCase):
 
     def setUp(self):
 
+        def _mock_get_matching_events(start, end, kind):
+            return [Event('Aliens', '1947-07-08', 'NM', 'Roswell Arrival')]
+
+        Event.get_matching_events = _mock_get_matching_events
+
         server.date_min = "1947-07-01"
         server.date_max = "1947-07-31"
         server.kinds = "Aliens"
@@ -124,6 +129,10 @@ class TestServerRoutes(UT.TestCase):
         result = self.client.get("/")
         self.assertEqual(result.status_code, 200)
         self.assertIn(expected, result.data)
+
+
+    def test_api(self):
+        pass
 
 
 
