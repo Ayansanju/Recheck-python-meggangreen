@@ -3,13 +3,26 @@
 from dbmodel import *
 from flask import Flask, request, jsonify, render_template
 from jinja2 import StrictUndefined
-import json, re
+import json
+from datetime import datetime
 
 # Start Flask app
 app = Flask(__name__)
 
 # Make Jinja raise an error if it encounters an undefined variable
 app.jinja_env.undefined = StrictUndefined
+
+
+##### Globals #####
+# Constant
+DATE_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+
+# Param Limits
+# These values could change as records are added or modified;
+# they ought to be initialized from the get go
+date_min = None
+date_max = None
+kinds = None
 
 
 ##### Routes #####
@@ -37,10 +50,31 @@ def return_selected_data():
 
 
 ##### Helper Functions #####
+def update_param_limits():
+    """ Update three globals. Ought to be called on database change. """
+
+    date_min = Event.get_earliest_date()
+    date_max = Event.get_latest_date()
+    kinds = Event.get_incident_kinds()
+
+    return None
+
+
 def validate_date(date):
     """ Returns the validated date as string or None. """
 
-    if re.search(DATE_PATTERN, date) and ( date_min <= date <= date_max ):
+    # Check if string is a date and in the correct format
+    try:
+        date_dt = datetime.strptime(date, '%Y-%m-%d')
+    except:
+        return None
+
+    # Convert min and max to datetime objects
+    date_min_dt = datetime.strptime(date_min, '%Y-%m-%d')
+    date_max_dt = datetime.strptime(date_max, '%Y-%m-%d')
+
+    # Return date if within parameters
+    if date_min_dt <= date_dt <= date_max_dt:
         return date
 
     return None
@@ -74,14 +108,7 @@ if __name__ == '__main__':
     # Run the app if everything is okay
     if okay_to_run:
         print("Starting app.")
-        # Constant
-        DATE_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}$')
-        # These values could change as records are added or modified;
-        # they ought to be initialized from the get go
-        date_min = Event.get_earliest_date()
-        date_max = Event.get_latest_date()
-        kinds = Event.get_incident_kinds()
-        # Run
+        update_param_limits()
         app.run(port=5000, host='0.0.0.0')
     else:
         print("Exiting.")
