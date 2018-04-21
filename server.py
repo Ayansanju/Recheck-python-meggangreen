@@ -127,6 +127,6 @@ if __name__ == '__main__':
         date_min = Event.get_earliest_date()
         date_max = Event.get_latest_date()
         kinds = Event.get_incident_kinds()
-        app.run(port=5000, host='0.0.0.0')
+        app.run(port=4000, host='0.0.0.0')
     else:
         print("Exiting.")
