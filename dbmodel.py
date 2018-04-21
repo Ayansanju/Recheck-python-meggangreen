@@ -127,25 +127,6 @@ def update_param_limits():
     return None
 
 
-##### Test Data #####
-def _create_test_data():
-    """ Creates data in test database. """
-
-    # Only run if connected to test db
-    db_uri = 'SQLALCHEMY_DATABASE_URI'
-    if db.app.config[db_uri] != 'postgresql:///checkrfemaTEST':
-        return None
-
-    events = [['Tornado', '1875-08-25', 'OK', 'OK Tornado'],
-              ['Flood', '1842-08-25', 'MI', 'MI Flood'],
-              ['Earthquake', '1857-01-18', 'PA', 'PA Earthquake']]
-
-    for evt in events:
-        db.session.add(Event(evt[0], date=evt[1], state=evt[2], title=evt[3]))
-
-    db.session.commit()
-
-
 ################################################################################
 
 if __name__ == '__main__':

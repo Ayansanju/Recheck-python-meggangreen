@@ -2,8 +2,10 @@
 
 import unittest as UT
 from flask import Flask
+from os import remove
+
 import server
-from dbmodel import db, Event, _create_test_data
+from dbmodel import db, Event, seed_db_from_csv
 # from selenium import webdriver
 
 def setUpModule():
@@ -13,14 +15,20 @@ def setUpModule():
     test_app = Flask(__name__)
 
     # Connect app to db
-    test_app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///checkrfemaTEST'
+    test_app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///checkrfemaTEST"
     test_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = test_app
     db.init_app(test_app)
 
     # Create tables and add test data
     db.create_all()
-    _create_test_data()
+    # It would be better to unit test these functions before using here, but for
+    # space, time, scope, etc. this is fine.
+    _create_test_csv()
+    seed_db_from_csv('test-data.csv')
+    # Remove test data csv file
+    remove('test-data.csv')
+
     # broswer = webdriver.Firefox()
 
 
@@ -99,6 +107,31 @@ class TestServerHelperFunctions(UT.TestCase):
                         'title': 'Roswell Arrival'}}
 
         self.assertEqual(server.unpack_events(events), unpacked)
+
+
+##### Test Data #####
+def _create_test_csv():
+    """ Creates data in test CSV file. """
+
+    events = [['Tornado', '1875-08-25', 'OK', 'OK Tornado'],
+              ['Flood', '1842-08-25', 'MI', 'MI Flood'],
+              ['Earthquake', '1857-01-18', 'PA', 'PA Earthquake']]
+
+    # Make temporary file and write to it;
+    # example from https://stackoverflow.com/a/39110
+    with open('test-data.csv', 'w') as test_csv:
+        test_csv.write("HEADER ROW\n")
+        for event in events:
+            # LATER: refactor this to be cleaner and less hard-coded
+            test_csv.write(",,,,," +
+                           event[2] + "," +
+                           event[1] + "," +
+                           ",," +
+                           event[0] + "," +
+                           event[3] + "," +
+                           "\n")
+
+    return None
 
 
 ################################################################################
