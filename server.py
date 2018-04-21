@@ -14,9 +14,6 @@ app.jinja_env.undefined = StrictUndefined
 
 
 ##### Globals #####
-# Constant
-DATE_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}$')
-
 # Param Limits
 # These values could change as records are added or modified;
 # they ought to be initialized from the get go
