@@ -40,16 +40,6 @@ class TestEventClass(UT.TestCase):
 
     """
 
-    def setUp(self):
-        pass
-
-
-
-    def tearDown(self):
-        pass
-
-
-
     def test_get_earliest_date(self):
 
         self.assertEqual(Event.get_earliest_date(), '1842-08-25')
