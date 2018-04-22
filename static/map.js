@@ -23,6 +23,7 @@ map.on('load', function () {
   }
 
   map.addSource('us-data', { type: 'geojson', data: statesData });
+
   doAddStatesLayer();
 
 });
@@ -32,7 +33,7 @@ map.on('click', 'us-states', function(e) {
   var bounds = new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]);
   coordinates.forEach(function(coord) {
     bounds.extend(coord);
-  })
+  });
 
   map.fitBounds(bounds, { padding: 100 });
 });
