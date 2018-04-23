@@ -8,4 +8,4 @@ You can also explore the API by sending queries to `/api` specifying an incident
 For example:
   * HTTP request `/api?kind=Tornado&start=2017-01-01&end=2017-01-31` will return JSON containing 27 incidents;
   * HTTP request `/api?kind=ksdjfhs&start=2017-01-01&end=2017-01-31` will return JSON containing 36 incidents; and
-  * HTTP requests `/api?kind=Tornado&start=2017-01-01` and `/api?kind=dfgdg&start=2017-01-01&end=sdfgs` will return the same 1847 events.
+  * HTTP requests `/api?kind=Tornado&start=2017-01-01` and `/api?kind=Tornado&start=2017-01-01&end=sdfgs` will return the same 45 events.
