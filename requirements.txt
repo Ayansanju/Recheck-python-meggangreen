@@ -2,5 +2,5 @@ Flask==0.12.2
 Flask-SQLAlchemy==2.3.2
 Jinja2==2.10
 psycopg2-binary==2.7.4
-requests==2.18.4
+requests>=2.20.0
 SQLAlchemy==1.2.6
